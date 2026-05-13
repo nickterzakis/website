@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nick Terzakis</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+  <style>
+    :root {
+      --cream: #f5f0e8;
+      --ink: #1a1209;
+      --rust: #c04c1a;
+      --rust-light: #e85d24;
+      --gold: #c9982a;
+      --muted: #8a7f72;
+      --card-bg: #fdfaf4;
+      --border: #e0d6c4;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.5;
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      background: transparent;
+      padding: 1.5rem 2rem;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(245, 240, 232, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+    .navbar-brand {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--rust) !important;
+      font-weight: 500;
+    }
+    .nav-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink) !important;
+      padding: 0.4rem 1rem !important;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--rust) !important; }
+    .nav-link.resume-btn {
+      border: 1.5px solid var(--rust);
+      border-radius: 2px;
+      color: var(--rust) !important;
+      margin-left: 0.5rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-link.resume-btn:hover {
+      background: var(--rust);
+      color: var(--cream) !important;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg-text {
+      position: absolute;
+      top: 50%;
+      left: -2%;
+      transform: translateY(-50%);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(8rem, 20vw, 18rem);
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(192, 76, 26, 0.08);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 2.5rem;
+      height: 1px;
+      background: var(--rust);
+    }
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+    .hero-name em {
+      font-style: italic;
+      color: var(--rust);
+    }
+    .hero-tagline {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 480px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--rust);
+      color: var(--cream);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.9rem 2rem;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: background 0.25s, transform 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .hero-cta:hover {
+      background: var(--rust-light);
+      color: var(--cream);
+      transform: translateY(-2px);
+    }
+    .hero-cta-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      border: 1.5px solid var(--ink);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.9rem 2rem;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: background 0.25s, transform 0.2s;
+      margin-left: 1rem;
+    }
+    .hero-cta-secondary:hover {
+      background: var(--ink);
+      color: var(--cream);
+      transform: translateY(-2px);
+    }
+    .hero-stats {
+      margin-top: 4rem;
+      display: flex;
+      gap: 3rem;
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+    }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--rust);
+      line-height: 1;
+    }
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 6rem 0; }
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      max-width: 3rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    /* ── ABOUT ── */
+    #about { background: var(--cream); }
+    .about-text {
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height: 1.85;
+      font-weight: 300;
+    }
+    .about-text strong { color: var(--ink); font-weight: 500; }
+
+    /* ── SKILLS GRID ── */
+    #skills { background: var(--ink); color: var(--cream); }
+    #skills .section-label { color: var(--gold); }
+    #skills .section-label::after { background: rgba(255,255,255,0.15); }
+    #skills .section-title { color: var(--cream); }
+    .skill-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      padding: 1.75rem;
+      transition: background 0.25s, border-color 0.25s, transform 0.2s;
+      height: 100%;
+    }
+    .skill-card:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(201, 152, 42, 0.4);
+      transform: translateY(-3px);
+    }
+    .skill-card-icon {
+      font-size: 1.5rem;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .skill-card h5 {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+    .skill-card p {
+      font-size: 0.88rem;
+      color: rgba(245,240,232,0.6);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ── EXPERIENCE ── */
+    #experience { background: var(--cream); }
+    .exp-entry {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 2rem;
+      padding: 2.5rem 0;
+      border-bottom: 1px solid var(--border);
+      animation: fadeUp 0.6s ease both;
+    }
+    .exp-entry:last-child { border-bottom: none; }
+    .exp-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding-top: 0.2rem;
+    }
+    .exp-role {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+    .exp-company {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin-bottom: 1rem;
+    }
+    .exp-bullets {
+      list-style: none;
+      padding: 0;
+    }
+    .exp-bullets li {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+      padding-left: 1.2rem;
+      position: relative;
+      margin-bottom: 0.5rem;
+    }
+    .exp-bullets li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--rust);
+      font-size: 0.8rem;
+    }
+
+    /* ── MUSIC ── */
+    #music { background: #f0ebe0; }
+    .music-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .music-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 50px rgba(26,18,9,0.12);
+    }
+    .music-card-header {
+      background: var(--ink);
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .music-avatar {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--rust) 0%, var(--gold) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+    .music-channel-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--cream);
+    }
+    .music-channel-handle {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      margin-top: 0.2rem;
+    }
+    .music-card-body { padding: 2rem; flex: 1; }
+    .music-genres {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .genre-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(192,76,26,0.1);
+      color: var(--rust);
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+      border: 1px solid rgba(192,76,26,0.2);
+    }
+    .music-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+    .music-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--rust);
+      color: var(--cream);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.8rem 1.75rem;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .music-cta:hover {
+      background: var(--rust-light);
+      color: var(--cream);
+      transform: translateY(-2px);
+    }
+    .music-also {
+      margin-top: 1rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+    .music-also a {
+      color: var(--rust);
+      text-decoration: none;
+    }
+    .music-also a:hover { text-decoration: underline; }
+
+    /* ── RESUME ── */
+    #resume { background: var(--ink); color: var(--cream); }
+    #resume .section-label { color: var(--gold); }
+    #resume .section-label::after { background: rgba(255,255,255,0.15); }
+    #resume .section-title { color: var(--cream); }
+    .resume-download-block {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      padding: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+      transition: border-color 0.3s;
+    }
+    .resume-download-block:hover {
+      border-color: rgba(201,152,42,0.5);
+    }
+    .resume-file-info {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .resume-file-icon {
+      width: 56px; height: 56px;
+      background: rgba(201,152,42,0.15);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+    .resume-filename {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--cream);
+      letter-spacing: 0.04em;
+    }
+    .resume-filemeta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: rgba(245,240,232,0.4);
+      margin-top: 0.2rem;
+      letter-spacing: 0.06em;
+    }
+    .resume-download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.9rem 2rem;
+      border-radius: 2px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.2s;
+      white-space: nowrap;
+    }
+    .resume-download-btn:hover {
+      background: #e0ab30;
+      color: var(--ink);
+      transform: translateY(-2px);
+    }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--cream); }
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-decoration: none;
+      color: var(--ink);
+      background: var(--card-bg);
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 0.75rem;
+    }
+    .contact-link:hover {
+      border-color: var(--rust);
+      color: var(--rust);
+      transform: translateX(6px);
+      box-shadow: 0 4px 20px rgba(192,76,26,0.1);
+    }
+    .contact-link-icon {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: rgba(192,76,26,0.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      color: var(--rust);
+      flex-shrink: 0;
+    }
+    .contact-link-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .contact-link-value {
+      font-size: 0.95rem;
+      color: inherit;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      color: rgba(245,240,232,0.4);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeUp 0.7s ease both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .exp-entry { grid-template-columns: 1fr; gap: 0.5rem; }
+      .hero-stats { gap: 2rem; }
+      .resume-download-block { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="#">NT</a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        style="color: var(--ink);">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav align-items-center gap-1">
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+          <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
+          <li class="nav-item"><a class="nav-link" href="#music">Music</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link resume-btn" href="#resume"><i class="fas fa-file-alt me-1"></i>Resume</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg-text">Nick</div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-9">
+          <div class="hero-eyebrow fade-in">Pittsburgh, PA &nbsp;·&nbsp; Software Engineer &nbsp;·&nbsp; Musician</div>
+          <h1 class="hero-name fade-in delay-1">Nicholas<br><em>Terzakis</em></h1>
+          <p class="hero-tagline fade-in delay-2">
+            Senior software engineer crafting scalable systems and high-performance APIs by day — 
+            guitar-driven indie and ambient musician by night.
+          </p>
+          <div class="fade-in delay-3">
+            <a href="#experience" class="hero-cta">
+              <i class="fas fa-briefcase"></i> View Experience
+            </a>
+            <a href="#music" class="hero-cta-secondary" style="color:var(--ink); text-decoration:none;">
+              <i class="fas fa-music"></i> Hear My Music
+            </a>
+          </div>
+          <div class="hero-stats fade-in delay-4">
+            <div>
+              <div class="stat-num">7+</div>
+              <div class="stat-label">Years Experience</div>
+            </div>
+            <div>
+              <div class="stat-num">1.2M</div>
+              <div class="stat-label">Daily Transactions</div>
+            </div>
+            <div>
+              <div class="stat-num">40%</div>
+              <div class="stat-label">Query Time Reduction</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-5">
+          <div class="section-label">About Me</div>
+          <h2 class="section-title">Engineer.<br>Builder.<br>Creator.</h2>
+        </div>
+        <div class="col-lg-7">
+          <p class="about-text mb-4">
+            I'm a <strong>Senior Software Engineer</strong> based in Pittsburgh with over 7 years of experience building 
+            scalable, mission-critical systems. At FedEx, I architect and own full-stack solutions that process over 
+            <strong>1.2 million transactions daily</strong> — from Spring Boot microservices and native Android apps to 
+            optimized Oracle SQL and enterprise CI/CD pipelines.
+          </p>
+          <p class="about-text mb-4">
+            I specialize in <strong>modernizing legacy systems</strong>, native Android development, distributed 
+            architectures, and building the observability infrastructure (Splunk, AppDynamics, DynaTrace) to keep 
+            everything running reliably at scale.
+          </p>
+          <p class="about-text">
+            Away from the terminal, I create music under the name <strong>The Kid In The Red Hoodie</strong> — 
+            a blend of indie, lofi guitar loops, ambient textures, and alternative rock influences.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col">
+          <div class="section-label">Technical Skills</div>
+          <h2 class="section-title">The Toolkit</h2>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-sm-6 col-lg-4">
+          <div class="skill-card">
+            <div class="skill-card-icon"><i class="fas fa-code"></i></div>
+            <h5>Languages</h5>
+            <p>Java, Kotlin, JavaScript (Angular), TypeScript, Python, SQL, HTML/CSS</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+          <div class="skill-card">
+            <div class="skill-card-icon"><i class="fas fa-server"></i></div>
+            <h5>Backend & APIs</h5>
+            <p>Spring Boot, Spring MVC, REST APIs, JUnit, Mockito, event-driven architecture</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+          <div class="skill-card">
+            <div class="skill-card-icon"><i class="fab fa-android"></i></div>
+            <h5>Android</h5>
+            <p>Native Android (Java & Kotlin), MVVM architecture, Zebra + Panasonic SDK integration</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+          <div class="skill-card">
+            <div class="skill-card-icon"><i class="fas fa-database"></i></div>
+            <h5>Databases</h5>
+            <p>Oracle, MySQL, PostgreSQL, SQLite — query optimization, indexing, window functions</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+          <div class="skill-card">
+            <div class="skill-card-icon"><i class="fas fa-cloud"></i></div>
+            <h5>Cloud & DevOps</h5>
+            <p>Pivotal Cloud Foundry, Jenkins, CloudBees SDA, CI/CD pipeline design</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+          <div class="skill-card">
+            <div class="skill-card-icon"><i class="fas fa-chart-line"></i></div>
+            <h5>Monitoring</h5>
+            <p>Splunk, AppDynamics, DynaTrace — observability and site reliability engineering</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col">
+          <div class="section-label">Work History</div>
+          <h2 class="section-title">Experience</h2>
+        </div>
+      </div>
+
+      <div class="exp-entry">
+        <div class="exp-date">Jul 2019<br>— Present</div>
+        <div>
+          <div class="exp-role">Full-Stack Developer</div>
+          <div class="exp-company">FedEx Services · Pittsburgh, PA</div>
+          <ul class="exp-bullets">
+            <li>Architected modernization of full-stack legacy scanning systems with Spring Boot REST microservices and Java/Kotlin Android apps, supporting 1.2M+ daily transactions with improved reliability.</li>
+            <li>Established monitoring and alerting platforms in Splunk, AppDynamics, and DynaTrace for mission-critical site reliability.</li>
+            <li>Led native Android development (MVVM) with Zebra and Panasonic hardware integration; designed haptic feedback API with backward and forward device compatibility.</li>
+            <li>Optimized complex SQL queries (multi-table JOINs, window functions, correlated subqueries) against Oracle databases, reducing average query execution time by ~40% via indexing and query plan analysis.</li>
+            <li>Implemented network-based caching in distributed sortation systems to optimize throughput and high-availability. Migrated outbound scanning front-end from Java to Kotlin.</li>
+            <li>Established the organization's first CI/CD pipeline via Jenkins and CloudBees SDA, automating deployments and reducing release risk.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-entry">
+        <div class="exp-date">May 2018<br>— Jul 2019</div>
+        <div>
+          <div class="exp-role">Desktop Support Technician</div>
+          <div class="exp-company">FedEx + InnoSource · Pittsburgh, PA</div>
+          <ul class="exp-bullets">
+            <li>Provided technical support impacting 400,000+ users across the FedEx network, resolving network, routing, DNS, DHCP, and ACL issues.</li>
+            <li>Configured Cisco routers and switches for new network segments using CCNA-level networking knowledge.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-entry">
+        <div class="exp-date">Aug 2014<br>— Apr 2018</div>
+        <div>
+          <div class="exp-role">Bachelor of Information Science</div>
+          <div class="exp-company">University of Pittsburgh · School of Computing and Information</div>
+          <ul class="exp-bullets">
+            <li>Minor in Computer Science, Specialization in Networks & Security.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MUSIC -->
+  <section id="music">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-lg-6">
+          <div class="section-label">Creative Side</div>
+          <h2 class="section-title">Music &<br>Sound</h2>
+          <p style="color:var(--muted); font-size:0.95rem; line-height:1.8; margin-top:1rem;">
+            Outside of engineering, I write and record music as 
+            <strong style="color:var(--ink);">The Kid In The Red Hoodie</strong> — 
+            a project rooted in guitar loops, indie atmosphere, and lo-fi textures.
+          </p>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <div class="music-card h-100">
+            <div class="music-card-header">
+              <div class="music-avatar">🎸</div>
+              <div>
+                <div class="music-channel-name">The Kid In The Red Hoodie</div>
+                <div class="music-channel-handle">@thekidintheredhoodie</div>
+              </div>
+            </div>
+            <div class="music-card-body">
+              <div class="music-genres">
+                <span class="genre-tag">Indie Rock</span>
+                <span class="genre-tag">Lo-Fi</span>
+                <span class="genre-tag">Ambient</span>
+                <span class="genre-tag">Guitar Loops</span>
+                <span class="genre-tag">Deep Focus</span>
+                <span class="genre-tag">Jazz Fusion</span>
+              </div>
+              <p class="music-desc">
+                A channel dedicated to original music — from guitar-driven indie and alternative rock to 
+                ambient lo-fi study music and jazz fusion experiments. Perfect for deep focus, background 
+                listening, or discovering something new.
+              </p>
+              <p class="music-desc">
+                Interested in custom outro music for your videos or a collaboration? 
+                Reach out at <a href="mailto:nterzakisfreelancer@gmail.com" style="color:var(--rust);">nterzakisfreelancer@gmail.com</a>.
+              </p>
+              <a href="https://www.youtube.com/@thekidintheredhoodie" target="_blank" rel="noopener" class="music-cta">
+                <i class="fab fa-youtube"></i> Watch on YouTube
+              </a>
+              <div class="music-also mt-3">
+                Custom music available · <a href="mailto:nterzakisfreelancer@gmail.com">Hire me</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="h-100 d-flex flex-column gap-3">
+            <div class="skill-card" style="background:var(--card-bg); border:1px solid var(--border); color:var(--ink);">
+              <div class="skill-card-icon" style="color:var(--rust);"><i class="fas fa-guitar"></i></div>
+              <h5 style="color:var(--rust);">Guitar-Driven Sound</h5>
+              <p style="color:var(--muted);">Layered guitar loops and textures in the style of Alex G and Modern Baseball, blended with atmospheric ambience.</p>
+            </div>
+            <div class="skill-card" style="background:var(--card-bg); border:1px solid var(--border); color:var(--ink);">
+              <div class="skill-card-icon" style="color:var(--rust);"><i class="fas fa-headphones-alt"></i></div>
+              <h5 style="color:var(--rust);">Study & Focus Music</h5>
+              <p style="color:var(--muted);">Ambient and lo-fi tracks crafted for deep focus, creative work, or winding down at the end of the day.</p>
+            </div>
+            <div class="skill-card" style="background:var(--card-bg); border:1px solid var(--border); color:var(--ink);">
+              <div class="skill-card-icon" style="color:var(--rust);"><i class="fas fa-video"></i></div>
+              <h5 style="color:var(--rust);">Custom Outro Music</h5>
+              <p style="color:var(--muted);">Available for custom video outro commissions. Reach out via email to discuss your project.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESUME -->
+  <section id="resume">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col">
+          <div class="section-label">Download</div>
+          <h2 class="section-title">Résumé</h2>
+          <p style="color:rgba(245,240,232,0.5); font-size:0.9rem; margin-top:0.5rem;">
+            Full PDF available below — includes experience, skills, and education.
+          </p>
+        </div>
+      </div>
+      <div class="resume-download-block">
+        <div class="resume-file-info">
+          <div class="resume-file-icon"><i class="fas fa-file-pdf"></i></div>
+          <div>
+            <div class="resume-filename">Nick_Terzakis_Resume_2026.pdf</div>
+            <div class="resume-filemeta">PDF · Senior Software Engineer · Last updated 2026</div>
+          </div>
+        </div>
+        <a href="Nick_Terzakis_Resume_2026.pdf" download class="resume-download-btn">
+          <i class="fas fa-download"></i> Download PDF
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-5 mb-5 mb-lg-0">
+          <div class="section-label">Get In Touch</div>
+          <h2 class="section-title">Let's Connect</h2>
+          <p style="color:var(--muted); font-size:0.95rem; line-height:1.8; margin-top:1rem;">
+            Open to new opportunities, collaborations, and interesting conversations. 
+            Feel free to reach out any time.
+          </p>
+        </div>
+        <div class="col-lg-6 offset-lg-1">
+          <a href="mailto:nicholasterzakis@gmail.com" class="contact-link">
+            <div class="contact-link-icon"><i class="fas fa-envelope"></i></div>
+            <div>
+              <div class="contact-link-label">Email</div>
+              <div class="contact-link-value">nicholasterzakis@gmail.com</div>
+            </div>
+          </a>
+          <a href="tel:8453231073" class="contact-link">
+            <div class="contact-link-icon"><i class="fas fa-phone"></i></div>
+            <div>
+              <div class="contact-link-label">Phone</div>
+              <div class="contact-link-value">845-323-1073</div>
+            </div>
+          </a>
+          <a href="https://github.com/nickterzakis" target="_blank" rel="noopener" class="contact-link">
+            <div class="contact-link-icon"><i class="fab fa-github"></i></div>
+            <div>
+              <div class="contact-link-label">GitHub</div>
+              <div class="contact-link-value">github.com/nickterzakis</div>
+            </div>
+          </a>
+          <a href="https://www.youtube.com/@thekidintheredhoodie" target="_blank" rel="noopener" class="contact-link">
+            <div class="contact-link-icon" style="background:rgba(192,76,26,0.08);"><i class="fab fa-youtube" style="color:var(--rust);"></i></div>
+            <div>
+              <div class="contact-link-label">Music · YouTube</div>
+              <div class="contact-link-value">@thekidintheredhoodie</div>
+            </div>
+          </a>
+          <a href="mailto:nterzakisfreelancer@gmail.com" class="contact-link">
+            <div class="contact-link-icon"><i class="fas fa-music"></i></div>
+            <div>
+              <div class="contact-link-label">Music Commissions</div>
+              <div class="contact-link-value">nterzakisfreelancer@gmail.com</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2026 Nicholas Terzakis &nbsp;·&nbsp; Pittsburgh, PA &nbsp;·&nbsp; Built with care</span>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Navbar scroll effect
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+  </script>
+</body>
+</html>
